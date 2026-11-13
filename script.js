@@ -40,6 +40,12 @@ const characterImages = {
   "Katniss Everdeen":"https://www.xtrafondos.com/wallpapers/vertical/jennifer-lawrence-como-katniss-441.jpg",
   "Sailor Moon":"https://knect365.imgix.net/uploads/LINDA-BALLANTYNE-de328f65b43b800f150ac3c3feac9d4c.jpg?auto=format&fit=max&h=462&w=462",
   "The Joker":"https://s3.amazonaws.com/comicgeeks/characters/avatars/137558.jpg",
+  "Loki":"https://bostonglobe-prod.cdn.arcpublishing.com/resizer/v2/K5S5THETTQI6DHEM4JEJZF7VSQ.jpg?auth=c55c7d2431b7ea91f58dd4e53b7c235826f9f07b8ca9d914ad099b223d12cb10&width=1440",
+  "Magneto":"https://vignette1.wikia.nocookie.net/p__/images/0/04/Magneto_%28Erik_Lenscherr%29_in_DOFP.png/revision/latest?cb=20160112152423&path-prefix=protagonist",
+  "Harley Quinn":"https://blog.pensanddolls.com.br/wp-content/uploads/2023/09/arlequina-traje-original.jpg",
+  "Maleficent":"https://cloudfront-ap-northeast-1.images.arcpublishing.com/chosun/MK73S5KWHXUJ5ZJH3CKWF2DLTY.jpg",
+  "Ursula":"https://media.vogue.co.jp/photos/6477344e5e6d677926814b16/master/w_1024%2Cc_limit/MSDLIME_WD007.jpg",
+  "Syndrome":"https://cdn.drukarnia.com.ua/64c78210280f442102147f38/images/articles/666acfbbbef6938bc3d81d57/ieVR548086.5280580022.jpeg",
   "Thanos":"https://cdn.marvel.com/content/2x/019tha_ons_cut_mob_01_1.webp",
   "Darth Vader":"https://cdn.polyspeak.ai/speakmaster/3160f59597ae65dee39df80b7ac72ede.webp",
   "Killmonger":"https://www.algoafm.co.za/images/cmsimages/big/or_2018221121159.png"

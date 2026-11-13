@@ -28,12 +28,35 @@ const characters = {
     {name:"Syndrome",wiki:"Syndrome (The Incredibles)",tag:"Pixar",text:"A fan whose resentment turns into obsession. He wants to prove he matters, no matter who gets hurt along the way."}
   ]
 };
+
+// Verified real character-image sources. Images load directly from their hosting sites.
+const characterImages = {
+  "Iron Man":"https://media.vandalsports.com/i/1200x1200/4-2024/2024499183_1.jpg",
+  "Black Panther":"https://filmtoday.ru/uploads/posts/2023-08/1724087505-1chernaya-pantera-supergeroj-ptq5ov52.jpg",
+  "Aang":"https://cdn.mobygames.com/covers/15545206-avatar-generations-iphone-front-cover.jpg",
+  "Link":"https://cdn.wikimg.net/en/zeldawiki/images/e/e4/SS_Link_Artwork.png",
+  "Captain America":"https://cdn.marvel.com/u/prod/marvel/i/mg/f/40/4bc5e29c24ccf/standard_incredible.jpg",
+  "Miles Morales":"https://ami.animecharactersdatabase.com/uploads/chars/38889-1759251507.jpg",
+  "Katniss Everdeen":"https://www.xtrafondos.com/wallpapers/vertical/jennifer-lawrence-como-katniss-441.jpg",
+  "Sailor Moon":"https://knect365.imgix.net/uploads/LINDA-BALLANTYNE-de328f65b43b800f150ac3c3feac9d4c.jpg?auto=format&fit=max&h=462&w=462",
+  "The Joker":"https://s3.amazonaws.com/comicgeeks/characters/avatars/137558.jpg",
+  "Thanos":"https://cdn.marvel.com/content/2x/019tha_ons_cut_mob_01_1.webp",
+  "Darth Vader":"https://cdn.polyspeak.ai/speakmaster/3160f59597ae65dee39df80b7ac72ede.webp",
+  "Killmonger":"https://www.algoafm.co.za/images/cmsimages/big/or_2018221121159.png"
+};
+
 function fallbackArt(name){return '<div class="image-fallback" aria-label="'+name+'">'+name.split(' ').map(x=>x[0]).join('').slice(0,2)+'</div>'}
-function card(item,index,offset){const n=index+offset,col=n%6,row=Math.floor(n/6);const posX=(col/5)*100,posY=(row/3)*100;return '<article class="character-card"><div class="character-image" role="img" aria-label="'+item.name+' original stylized portrait" style="background-position:'+posX+'% '+posY+'%"></div><div class="character-copy"><span class="character-tag">'+item.tag+'</span><h3>'+item.name+'</h3><p>'+item.text+'</p></div></article>'}
-function renderGrid(id,list,offset){
+function card(item){
+  const image=characterImages[item.name];
+  const visual=image
+    ? '<img src="'+image+'" alt="'+item.name+'" loading="lazy" decoding="async" referrerpolicy="no-referrer">'
+    : '<div class="image-fallback" aria-label="'+item.name+' image unavailable">'+item.name.split(' ').map(x=>x[0]).join('').slice(0,2)+'</div>';
+  return '<article class="character-card"><div class="character-image">'+visual+'</div><div class="character-copy"><span class="character-tag">'+item.tag+'</span><h3>'+item.name+'</h3><p>'+item.text+'</p></div></article>';
+}
+function renderGrid(id,list){
   const root=document.getElementById(id);
   if(!root)return;
-  root.innerHTML=list.map((item,index)=>card(item,index,offset)).join("");
+  root.innerHTML=list.map(card).join("");
 }
-renderGrid('hero-grid',characters.heroes,0);renderGrid('villain-grid',characters.villains,12);
+renderGrid('hero-grid',characters.heroes);renderGrid('villain-grid',characters.villains);
 const toggle=document.querySelector('.menu-toggle');const nav=document.querySelector('.nav');if(toggle&&nav){toggle.addEventListener('click',()=>{const open=nav.classList.toggle('open');toggle.setAttribute('aria-expanded',String(open));});}

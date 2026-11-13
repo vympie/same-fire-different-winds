@@ -29,45 +29,11 @@ const characters = {
   ]
 };
 function fallbackArt(name){return '<div class="image-fallback" aria-label="'+name+'">'+name.split(' ').map(x=>x[0]).join('').slice(0,2)+'</div>'}
-function card(item){return '<article class="character-card"><div class="character-image" data-wiki="'+encodeURIComponent(item.wiki)+'">'+fallbackArt(item.name)+'</div><div class="character-copy"><span class="character-tag">'+item.tag+'</span><h3>'+item.name+'</h3><p>'+item.text+'</p></div></article>'}
-async function loadCharacterImage(title){
-  // Wikipedia's REST summary endpoint returns a ready-to-use thumbnail URL
-  // and supports browser requests from GitHub Pages.
-  const url="https://en.wikipedia.org/api/rest_v1/page/summary/"+encodeURIComponent(title.replace(/ /g,"_"));
-  const response=await fetch(url,{headers:{Accept:"application/json"}});
-  if(!response.ok)throw new Error("Wikipedia image lookup failed: "+response.status);
-  const data=await response.json();
-  if(data.type!=="standard")throw new Error("No standard article image");
-  const image=data.thumbnail?.source||data.originalimage?.source;
-  if(!image)throw new Error("No image available for "+title);
-  return image;
-}
-function renderGrid(id,list){
+function card(item,index,offset){const n=index+offset,col=n%6,row=Math.floor(n/6);const posX=(col/5)*100,posY=(row/3)*100;return '<article class="character-card"><div class="character-image" role="img" aria-label="'+item.name+' original stylized portrait" style="background-position:'+posX+'% '+posY+'%"></div><div class="character-copy"><span class="character-tag">'+item.tag+'</span><h3>'+item.name+'</h3><p>'+item.text+'</p></div></article>'}
+function renderGrid(id,list,offset){
   const root=document.getElementById(id);
   if(!root)return;
-  root.innerHTML=list.map(card).join("");
-  root.querySelectorAll(".character-image").forEach(async box=>{
-    const title=decodeURIComponent(box.dataset.wiki);
-    try{
-      const imageUrl=await loadCharacterImage(title);
-      const img=document.createElement("img");
-      img.alt=title+" image";
-      img.loading="lazy";
-      img.decoding="async";
-      img.addEventListener("load",()=>{
-        box.replaceChildren(img);
-        box.classList.add("has-image");
-      },{once:true});
-      img.addEventListener("error",()=>{
-        box.classList.add("image-unavailable");
-      },{once:true});
-      img.src=imageUrl;
-    }catch(error){
-      // Keep the designed initials fallback if Wikipedia has no usable image.
-      box.classList.add("image-unavailable");
-      console.warn("Could not load image for "+title,error);
-    }
-  });
+  root.innerHTML=list.map((item,index)=>card(item,index,offset)).join("");
 }
-renderGrid('hero-grid',characters.heroes);renderGrid('villain-grid',characters.villains);
+renderGrid('hero-grid',characters.heroes,0);renderGrid('villain-grid',characters.villains,12);
 const toggle=document.querySelector('.menu-toggle');const nav=document.querySelector('.nav');if(toggle&&nav){toggle.addEventListener('click',()=>{const open=nav.classList.toggle('open');toggle.setAttribute('aria-expanded',String(open));});}

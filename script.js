@@ -30,6 +30,47 @@ const characters = {
 };
 function fallbackArt(name){return '<div class="image-fallback" aria-label="'+name+'">'+name.split(' ').map(x=>x[0]).join('').slice(0,2)+'</div>'}
 function card(item){return '<article class="character-card"><div class="character-image" data-wiki="'+encodeURIComponent(item.wiki)+'">'+fallbackArt(item.name)+'</div><div class="character-copy"><span class="character-tag">'+item.tag+'</span><h3>'+item.name+'</h3><p>'+item.text+'</p></div></article>'}
-function renderGrid(id,list){const root=document.getElementById(id);if(!root)return;root.innerHTML=list.map(card).join('');root.querySelectorAll('.character-image').forEach(async box=>{try{const title=decodeURIComponent(box.dataset.wiki);const res=await fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent(title));if(!res.ok)throw new Error('No image');const data=await res.json();const url=data.thumbnail?.source||data.originalimage?.source;if(!url)throw new Error('No image');const img=new Image();img.alt=title;img.loading='lazy';img.src=url;img.onload=()=>{box.innerHTML='';box.appendChild(img)};img.onerror=()=>{};}catch(e){/* Keep the initials fallback if Wikipedia has no suitable image. */}})}
+async function loadCharacterImage(title){
+  // Use Wikipedia's page-images API, which supports browser CORS requests.
+  const params=new URLSearchParams({
+    action:"query",
+    format:"json",
+    prop:"pageimages",
+    piprop:"thumbnail",
+    pithumbsize:"1000",
+    titles:title,
+    origin:"*"
+  });
+  const response=await fetch("https://en.wikipedia.org/w/api.php?"+params.toString());
+  if(!response.ok)throw new Error("Image request failed");
+  const data=await response.json();
+  const page=Object.values(data.query?.pages||{})[0];
+  return page?.thumbnail?.source||null;
+}
+function renderGrid(id,list){
+  const root=document.getElementById(id);
+  if(!root)return;
+  root.innerHTML=list.map(card).join('');
+  root.querySelectorAll('.character-image').forEach(async box=>{
+    try{
+      const title=decodeURIComponent(box.dataset.wiki);
+      const url=await loadCharacterImage(title);
+      if(!url)throw new Error("No image available");
+      const img=new Image();
+      img.alt=title+" character image";
+      img.loading="lazy";
+      img.decoding="async";
+      img.src=url;
+      img.onload=()=>{
+        box.innerHTML='';
+        box.appendChild(img);
+        box.classList.add("has-image");
+      };
+      img.onerror=()=>{/* Keep the initials fallback if an image cannot load. */};
+    }catch(error){
+      // Keep the initials fallback if Wikipedia has no suitable image.
+    }
+  });
+}
 renderGrid('hero-grid',characters.heroes);renderGrid('villain-grid',characters.villains);
 const toggle=document.querySelector('.menu-toggle');const nav=document.querySelector('.nav');if(toggle&&nav){toggle.addEventListener('click',()=>{const open=nav.classList.toggle('open');toggle.setAttribute('aria-expanded',String(open));});}

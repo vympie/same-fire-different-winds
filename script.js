@@ -31,44 +31,41 @@ const characters = {
 function fallbackArt(name){return '<div class="image-fallback" aria-label="'+name+'">'+name.split(' ').map(x=>x[0]).join('').slice(0,2)+'</div>'}
 function card(item){return '<article class="character-card"><div class="character-image" data-wiki="'+encodeURIComponent(item.wiki)+'">'+fallbackArt(item.name)+'</div><div class="character-copy"><span class="character-tag">'+item.tag+'</span><h3>'+item.name+'</h3><p>'+item.text+'</p></div></article>'}
 async function loadCharacterImage(title){
-  // Use Wikipedia's page-images API, which supports browser CORS requests.
-  const params=new URLSearchParams({
-    action:"query",
-    format:"json",
-    prop:"pageimages",
-    piprop:"thumbnail",
-    pithumbsize:"1000",
-    titles:title,
-    origin:"*"
-  });
-  const response=await fetch("https://en.wikipedia.org/w/api.php?"+params.toString());
-  if(!response.ok)throw new Error("Image request failed");
+  // Wikipedia's REST summary endpoint returns a ready-to-use thumbnail URL
+  // and supports browser requests from GitHub Pages.
+  const url="https://en.wikipedia.org/api/rest_v1/page/summary/"+encodeURIComponent(title.replace(/ /g,"_"));
+  const response=await fetch(url,{headers:{Accept:"application/json"}});
+  if(!response.ok)throw new Error("Wikipedia image lookup failed: "+response.status);
   const data=await response.json();
-  const page=Object.values(data.query?.pages||{})[0];
-  return page?.thumbnail?.source||null;
+  if(data.type!=="standard")throw new Error("No standard article image");
+  const image=data.thumbnail?.source||data.originalimage?.source;
+  if(!image)throw new Error("No image available for "+title);
+  return image;
 }
 function renderGrid(id,list){
   const root=document.getElementById(id);
   if(!root)return;
-  root.innerHTML=list.map(card).join('');
-  root.querySelectorAll('.character-image').forEach(async box=>{
+  root.innerHTML=list.map(card).join("");
+  root.querySelectorAll(".character-image").forEach(async box=>{
+    const title=decodeURIComponent(box.dataset.wiki);
     try{
-      const title=decodeURIComponent(box.dataset.wiki);
-      const url=await loadCharacterImage(title);
-      if(!url)throw new Error("No image available");
-      const img=new Image();
-      img.alt=title+" character image";
+      const imageUrl=await loadCharacterImage(title);
+      const img=document.createElement("img");
+      img.alt=title+" image";
       img.loading="lazy";
       img.decoding="async";
-      img.src=url;
-      img.onload=()=>{
-        box.innerHTML='';
-        box.appendChild(img);
+      img.addEventListener("load",()=>{
+        box.replaceChildren(img);
         box.classList.add("has-image");
-      };
-      img.onerror=()=>{/* Keep the initials fallback if an image cannot load. */};
+      },{once:true});
+      img.addEventListener("error",()=>{
+        box.classList.add("image-unavailable");
+      },{once:true});
+      img.src=imageUrl;
     }catch(error){
-      // Keep the initials fallback if Wikipedia has no suitable image.
+      // Keep the designed initials fallback if Wikipedia has no usable image.
+      box.classList.add("image-unavailable");
+      console.warn("Could not load image for "+title,error);
     }
   });
 }

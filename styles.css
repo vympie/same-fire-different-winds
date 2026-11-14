@@ -35,3 +35,26 @@
 .character-detail-copy p:last-child{margin-bottom:0}
 .character-detail-copy strong{display:block;color:#e2c394;font-size:9px;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:4px}
 @media(max-width:600px){.character-details summary{font-size:9px}.character-detail-copy p{font-size:10px}}
+
+
+/* Clickable character cards and cinematic profile overlay */
+.character-card{cursor:pointer;outline:none}
+.character-card:focus-visible{border-color:var(--gold);box-shadow:0 0 0 2px #d5ad7355}
+.card-read-more{display:flex;justify-content:space-between;align-items:center;margin-top:17px;padding-top:12px;border-top:1px solid var(--line);color:var(--gold);font-size:10px;letter-spacing:.5px}
+.card-read-more span{font-size:16px;transition:transform .2s}
+.character-card:hover .card-read-more span{transform:translate(3px,-3px)}
+.profile-open{overflow:hidden}
+.profile-overlay{position:fixed;inset:0;z-index:20;background:#080807df;backdrop-filter:blur(9px);display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;visibility:hidden;transition:opacity .25s,visibility .25s}
+.profile-overlay.is-open{opacity:1;visibility:visible}
+.profile-panel{position:relative;width:min(720px,100%);max-height:min(86vh,850px);overflow-y:auto;background:linear-gradient(145deg,#201e19,#141412 65%);border:1px solid #d5ad7355;padding:clamp(28px,5vw,58px);transform:translateY(16px);transition:transform .25s}
+.profile-overlay.is-open .profile-panel{transform:translateY(0)}
+.profile-close{position:absolute;top:17px;right:20px;width:38px;height:38px;border:1px solid var(--line);background:#ffffff08;color:var(--ink);font-size:25px;cursor:pointer}
+.profile-close:hover{border-color:var(--gold);color:var(--gold)}
+.profile-panel h2{font:500 clamp(38px,7vw,62px)/1.1 var(--serif);margin:12px 45px 14px 0}
+.profile-summary{max-width:560px;color:#c3bdb2;font-size:14px;line-height:1.8}
+.profile-divider{height:1px;background:var(--line);margin:30px 0}
+.profile-section{margin:27px 0}
+.profile-section h3{font:500 25px var(--serif);margin:5px 0 9px}
+.profile-section>p:last-child{color:#bdb7ac;font-size:13px;line-height:1.85;margin:0;max-width:610px}
+.profile-final{padding:22px 24px;background:#d5ad730d;border-left:2px solid var(--gold)}
+@media(max-width:600px){.profile-overlay{padding:10px}.profile-panel{max-height:92vh;padding:30px 23px}.profile-panel h2{font-size:42px}.profile-summary{font-size:13px}}

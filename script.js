@@ -43,7 +43,7 @@ const characterImages = {
   "Link":"https://cdn.wikimg.net/en/zeldawiki/images/e/e4/SS_Link_Artwork.png",
   "Captain America":"https://cdn.marvel.com/u/prod/marvel/i/mg/f/40/4bc5e29c24ccf/standard_incredible.jpg",
   "Miles Morales":"https://ami.animecharactersdatabase.com/uploads/chars/38889-1759251507.jpg",
-  "Katniss Everdeen":"https://www.fantaxy.de/images/newspics/hg/ew6.jpg",
+  "Katniss Everdeen":"https://commons.wikimedia.org/wiki/Special:FilePath/Katniss_Everdeen,_Hunger_Games.jpg",
   "Sailor Moon":"https://knect365.imgix.net/uploads/LINDA-BALLANTYNE-de328f65b43b800f150ac3c3feac9d4c.jpg?auto=format&fit=max&h=462&w=462",
   "The Joker":"https://s3.amazonaws.com/comicgeeks/characters/avatars/137558.jpg",
   "Loki":"https://bostonglobe-prod.cdn.arcpublishing.com/resizer/v2/K5S5THETTQI6DHEM4JEJZF7VSQ.jpg?auth=c55c7d2431b7ea91f58dd4e53b7c235826f9f07b8ca9d914ad099b223d12cb10&width=1440",

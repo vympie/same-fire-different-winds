@@ -89,9 +89,9 @@ function fallbackArt(name){return '<div class="image-fallback" aria-label="'+nam
 function card(item){
   const image=characterImages[item.name];
   const visual=image
-    ? '<img src="'+image+'" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer">'
+    ? '<img src="'+image+'" alt="'+item.name+'" loading="lazy" decoding="async" referrerpolicy="no-referrer">'
     : '<div class="image-fallback" aria-hidden="true">'+item.name.split(' ').map(x=>x[0]).join('').slice(0,2)+'</div>';
-  return '<article class="character-card" tabindex="0" role="button" aria-label="Read the story of '+item.name+'" data-character="'+item.name+'"><div class="character-image">'+visual+'</div><div class="character-copy"><span class="character-tag">'+item.tag+'</span><h3>'+item.name+'</h3><p>'+item.text+'</p><span class="card-read-more">Explore their story <span aria-hidden="true">↗</span></span></div></article>';
+  return '<a class="character-card" href="character.html?name='+encodeURIComponent(item.name)+'" aria-label="Read the story of '+item.name+'"><div class="character-image">'+visual+'</div><div class="character-copy"><span class="character-tag">'+item.tag+'</span><h3>'+item.name+'</h3><p>'+item.text+'</p></div></a>';
 }
 function renderGrid(id,list){
   const root=document.getElementById(id);
@@ -100,32 +100,27 @@ function renderGrid(id,list){
 }
 renderGrid('hero-grid',characters.heroes);renderGrid('villain-grid',characters.villains);
 
-// Character profile overlay: cards open a focused, accessible story view.
-const profile=document.createElement('div');
-profile.className='profile-overlay';
-profile.id='character-profile';
-profile.setAttribute('aria-hidden','true');
-profile.innerHTML='<section class="profile-panel" role="dialog" aria-modal="true" aria-labelledby="profile-name"><button class="profile-close" type="button" aria-label="Close profile">×</button><p class="eyebrow" id="profile-tag"></p><h2 id="profile-name"></h2><p class="profile-summary" id="profile-summary"></p><div class="profile-divider"></div><div class="profile-section"><p class="eyebrow">THE BEGINNING</p><h3>Backstory</h3><p id="profile-backstory"></p></div><div class="profile-section"><p class="eyebrow">WHAT DRIVES THEM</p><h3>Motivations</h3><p id="profile-reasons"></p></div><div class="profile-section profile-final"><p class="eyebrow">A CLOSER LOOK</p><h3>What their story tells us</h3><p id="profile-reflection"></p></div></section>';
-document.body.appendChild(profile);
-const closeProfile=()=>{profile.classList.remove('is-open');profile.setAttribute('aria-hidden','true');document.body.classList.remove('profile-open');};
-function openProfile(item){
-  const detail=characterDetails[item.name];
-  if(!detail)return;
-  document.getElementById('profile-tag').textContent=item.tag+' / CHARACTER PROFILE';
-  document.getElementById('profile-name').textContent=item.name;
-  document.getElementById('profile-summary').textContent=item.text;
-  document.getElementById('profile-backstory').textContent=detail.backstory;
-  document.getElementById('profile-reasons').textContent=detail.reasons;
-  document.getElementById('profile-reflection').textContent='Their story shows how experiences and beliefs can shape a person — while their choices still matter. Understanding a character is not the same as agreeing with everything they do.';
-  profile.classList.add('is-open');profile.setAttribute('aria-hidden','false');document.body.classList.add('profile-open');
-  profile.querySelector('.profile-close').focus();
+// Dedicated character profile page, selected through ?name=Character.
+function renderCharacterPage(){
+  const root=document.getElementById('character-profile-page');
+  if(!root)return;
+  const name=new URLSearchParams(window.location.search).get('name');
+  const item=[...characters.heroes,...characters.villains].find(character=>character.name===name);
+  const detail=item&&characterDetails[item.name];
+  if(!item||!detail){
+    root.innerHTML='<section class="profile-not-found"><p class="eyebrow">CHARACTER NOT FOUND</p><h1>That story is missing.</h1><a class="profile-back" href="heroes.html">← Back to the characters</a></section>';
+    return;
+  }
+  const image=characterImages[item.name];
+  const imageMarkup=image?'<img class="profile-art" src="'+image+'" alt="'+item.name+'" referrerpolicy="no-referrer">':'';
+  const category=characters.heroes.includes(item)?'HERO':'VILLAIN';
+  root.innerHTML='<section class="character-profile-hero '+(category==='HERO'?'heroes-theme':'villains-theme')+'">'+
+    '<a class="profile-back" href="'+(category==='HERO'?'heroes.html':'villains.html')+'">← Back to '+(category==='HERO'?'heroes':'villains')+'</a>'+
+    '<div class="profile-hero-layout">'+(imageMarkup?'<div class="profile-art-wrap">'+imageMarkup+'</div>':'')+
+    '<div class="profile-heading"><p class="eyebrow">'+category+' / '+item.tag+'</p><h1>'+item.name+'</h1><p>'+item.text+'</p></div></div></section>'+
+    '<section class="profile-story"><article><p class="eyebrow">01 / THE BEGINNING</p><h2>Backstory</h2><p>'+detail.backstory+'</p></article>'+
+    '<article><p class="eyebrow">02 / WHAT DRIVES THEM</p><h2>Motivations</h2><p>'+detail.reasons+'</p></article>'+
+    '<article class="profile-reflection"><p class="eyebrow">03 / A CLOSER LOOK</p><h2>Understanding the character</h2><p>'+item.text+' Understanding their reasons does not mean agreeing with every choice they make.</p></article></section>';
 }
-document.querySelectorAll('.character-card').forEach(card=>{
-  const item=[...characters.heroes,...characters.villains].find(x=>x.name===card.dataset.character);
-  card.addEventListener('click',()=>openProfile(item));
-  card.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();openProfile(item);}});
-});
-profile.querySelector('.profile-close').addEventListener('click',closeProfile);
-profile.addEventListener('click',event=>{if(event.target===profile)closeProfile();});
-document.addEventListener('keydown',event=>{if(event.key==='Escape'&&profile.classList.contains('is-open'))closeProfile();});
+renderCharacterPage();
 const toggle=document.querySelector('.menu-toggle');const nav=document.querySelector('.nav');if(toggle&&nav){toggle.addEventListener('click',()=>{const open=nav.classList.toggle('open');toggle.setAttribute('aria-expanded',String(open));});}

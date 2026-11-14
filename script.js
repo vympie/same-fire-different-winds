@@ -89,11 +89,9 @@ function fallbackArt(name){return '<div class="image-fallback" aria-label="'+nam
 function card(item){
   const image=characterImages[item.name];
   const visual=image
-    ? '<img src="'+image+'" alt="'+item.name+'" loading="lazy" decoding="async" referrerpolicy="no-referrer">'
-    : '<div class="image-fallback" aria-label="'+item.name+' image unavailable">'+item.name.split(' ').map(x=>x[0]).join('').slice(0,2)+'</div>';
-  const detail=characterDetails[item.name];
-  const story=detail ? '<details class="character-details"><summary>Backstory &amp; reasons</summary><div class="character-detail-copy"><p><strong>Backstory</strong>'+detail.backstory+'</p><p><strong>Reasons</strong>'+detail.reasons+'</p></div></details>' : '';
-  return '<article class="character-card"><div class="character-image">'+visual+'</div><div class="character-copy"><span class="character-tag">'+item.tag+'</span><h3>'+item.name+'</h3><p>'+item.text+'</p>'+story+'</div></article>';
+    ? '<img src="'+image+'" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer">'
+    : '<div class="image-fallback" aria-hidden="true">'+item.name.split(' ').map(x=>x[0]).join('').slice(0,2)+'</div>';
+  return '<article class="character-card" tabindex="0" role="button" aria-label="Read the story of '+item.name+'" data-character="'+item.name+'"><div class="character-image">'+visual+'</div><div class="character-copy"><span class="character-tag">'+item.tag+'</span><h3>'+item.name+'</h3><p>'+item.text+'</p><span class="card-read-more">Explore their story <span aria-hidden="true">↗</span></span></div></article>';
 }
 function renderGrid(id,list){
   const root=document.getElementById(id);
@@ -101,4 +99,33 @@ function renderGrid(id,list){
   root.innerHTML=list.map(card).join("");
 }
 renderGrid('hero-grid',characters.heroes);renderGrid('villain-grid',characters.villains);
+
+// Character profile overlay: cards open a focused, accessible story view.
+const profile=document.createElement('div');
+profile.className='profile-overlay';
+profile.id='character-profile';
+profile.setAttribute('aria-hidden','true');
+profile.innerHTML='<section class="profile-panel" role="dialog" aria-modal="true" aria-labelledby="profile-name"><button class="profile-close" type="button" aria-label="Close profile">×</button><p class="eyebrow" id="profile-tag"></p><h2 id="profile-name"></h2><p class="profile-summary" id="profile-summary"></p><div class="profile-divider"></div><div class="profile-section"><p class="eyebrow">THE BEGINNING</p><h3>Backstory</h3><p id="profile-backstory"></p></div><div class="profile-section"><p class="eyebrow">WHAT DRIVES THEM</p><h3>Motivations</h3><p id="profile-reasons"></p></div><div class="profile-section profile-final"><p class="eyebrow">A CLOSER LOOK</p><h3>What their story tells us</h3><p id="profile-reflection"></p></div></section>';
+document.body.appendChild(profile);
+const closeProfile=()=>{profile.classList.remove('is-open');profile.setAttribute('aria-hidden','true');document.body.classList.remove('profile-open');};
+function openProfile(item){
+  const detail=characterDetails[item.name];
+  if(!detail)return;
+  document.getElementById('profile-tag').textContent=item.tag+' / CHARACTER PROFILE';
+  document.getElementById('profile-name').textContent=item.name;
+  document.getElementById('profile-summary').textContent=item.text;
+  document.getElementById('profile-backstory').textContent=detail.backstory;
+  document.getElementById('profile-reasons').textContent=detail.reasons;
+  document.getElementById('profile-reflection').textContent='Their story shows how experiences and beliefs can shape a person — while their choices still matter. Understanding a character is not the same as agreeing with everything they do.';
+  profile.classList.add('is-open');profile.setAttribute('aria-hidden','false');document.body.classList.add('profile-open');
+  profile.querySelector('.profile-close').focus();
+}
+document.querySelectorAll('.character-card').forEach(card=>{
+  const item=[...characters.heroes,...characters.villains].find(x=>x.name===card.dataset.character);
+  card.addEventListener('click',()=>openProfile(item));
+  card.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();openProfile(item);}});
+});
+profile.querySelector('.profile-close').addEventListener('click',closeProfile);
+profile.addEventListener('click',event=>{if(event.target===profile)closeProfile();});
+document.addEventListener('keydown',event=>{if(event.key==='Escape'&&profile.classList.contains('is-open'))closeProfile();});
 const toggle=document.querySelector('.menu-toggle');const nav=document.querySelector('.nav');if(toggle&&nav){toggle.addEventListener('click',()=>{const open=nav.classList.toggle('open');toggle.setAttribute('aria-expanded',String(open));});}

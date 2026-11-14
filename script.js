@@ -31,13 +31,19 @@ const characters = {
 
 // Verified real character-image sources. Images load directly from their hosting sites.
 const characterImages = {
+  "Light Yagami":"https://abrakadabra.fun/uploads/posts/2022-02/1646062306_2-abrakadabra-fun-p-kto-takoi-kira-iz-tetradi-smerti-2.jpg",
+  "Green Goblin":"https://elcomercio.pe/resizer/v2/BCX24KKRKFCLXOV46X3SMKTRIM.jpg?auth=27973bc15f3d8442a59cdc5916c43ad447826b8b43b54026a19d50f4773fc0e7&height=1200&quality=75&smart=true&width=1200",
+  "Superman":"https://s.hdnux.com/photos/01/53/50/32/28214966/3/rawImage.jpg",
+  "Wonder Woman":"https://i.pinimg.com/736x/ce/92/f3/ce92f38b0c53bb6df320540782f3aa11.jpg",
+  "Batman":"https://media.canalnet.tv/2018/08/Batman.jpg",
+  "Spider-Man":"https://images.mentoday.ru/upload/img_cache/cac/cacf647edc7bcf1eaa251bfcd8335e97_cropped_666x524.jpg",
   "Iron Man":"https://media.vandalsports.com/i/1200x1200/4-2024/2024499183_1.jpg",
   "Black Panther":"https://filmtoday.ru/uploads/posts/2023-08/1724087505-1chernaya-pantera-supergeroj-ptq5ov52.jpg",
   "Aang":"https://cdn.mobygames.com/covers/15545206-avatar-generations-iphone-front-cover.jpg",
   "Link":"https://cdn.wikimg.net/en/zeldawiki/images/e/e4/SS_Link_Artwork.png",
   "Captain America":"https://cdn.marvel.com/u/prod/marvel/i/mg/f/40/4bc5e29c24ccf/standard_incredible.jpg",
   "Miles Morales":"https://ami.animecharactersdatabase.com/uploads/chars/38889-1759251507.jpg",
-  "Katniss Everdeen":"https://www.xtrafondos.com/wallpapers/vertical/jennifer-lawrence-como-katniss-441.jpg",
+  "Katniss Everdeen":"https://upload.wikimedia.org/wikipedia/commons/8/8f/Katniss_Everdeen%2C_Hunger_Games.jpg",
   "Sailor Moon":"https://knect365.imgix.net/uploads/LINDA-BALLANTYNE-de328f65b43b800f150ac3c3feac9d4c.jpg?auto=format&fit=max&h=462&w=462",
   "The Joker":"https://s3.amazonaws.com/comicgeeks/characters/avatars/137558.jpg",
   "Loki":"https://bostonglobe-prod.cdn.arcpublishing.com/resizer/v2/K5S5THETTQI6DHEM4JEJZF7VSQ.jpg?auth=c55c7d2431b7ea91f58dd4e53b7c235826f9f07b8ca9d914ad099b223d12cb10&width=1440",
